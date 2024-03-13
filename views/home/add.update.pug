@@ -1,0 +1,35 @@
+include ../head.pug
+body
+    .container.mt-4
+      h1 Add/Update Plan
+      form(action="/submit-plan-form" method="POST")
+        .mb-2
+          label(for="plans" class="form-label") Plans
+          input(type="text" class="form-control" id="plans" name="plans" required)
+        .mb-2
+          label(for="DateTime" class="form-label") Date/Time
+          .input-group.date(id="datetimepicker1" data-target-input="nearest")
+            input(type="text" class="form-control datetimepicker-input" data-target="#datetimepicker1" name="DateTime" required)
+            .input-group-append(data-target="#datetimepicker1" data-toggle="datetimepicker")
+              .input-group-text
+                i.fas.fa-calendar-alt
+        .mb-2
+          label(for="meeting" class="form-label") Meeting
+          input(type="text" class="form-control" id="meeting" name="meeting" required)
+        .mb-2
+          label(for="timeofMeeting" class="form-label") Time of meeting
+          input(type="text" class="form-control" id="timeofMeeting" name="timeofmeetiing" required)
+        .mb-2
+          label(for="placeofMeeting" class="form-label") Place of meeting
+          input(type="text" class="form-control" id="placeofMeeting" name="placeofMeeting" required)
+        button(type="submit" class="btn btn-primary") Add/Edit
+
+    script.
+        const picker = new tempusDominus.TempusDominus(document.getElementById('datetimepicker1'),{
+            localization: {
+                'locale': 'fr'
+            }
+        });
+        picker.dates.formatInput = function(date) {
+            return moment(date).format('DD/MM/YYYY HH:mm')
+        }

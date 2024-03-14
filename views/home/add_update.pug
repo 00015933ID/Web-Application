@@ -1,7 +1,9 @@
+//-Including head template
 include ../head.pug
 body
   .container.mt-5
     h1 #{mode}
+    //-Form for adding or updating data
     .mb-3
       label(for="plans" class="form-label") Plans
       input(type="text" class="form-control" id="plans" name="plans" required)
@@ -16,17 +18,18 @@ body
       label(for="meeting" class="form-label") Meeting
       input(type="text" class="form-control" id="meeting" name="meeting" required)
     .mb-3
-      label(for="" class="form-label") contactPhone
+      label(for="" class="form-label") Contact Phone
       input(type="tel" class="form-control" id="contactPhone" name="contactPhone" required)
     .mb-3
       label(for="placeofMeeting" class="form-label") Place of meeting
       input(type="text" class="form-control" id="placeofMeeting" name="placeofMeeting" required)
+      //-Button for submitting the form (either add or update)
     button(type="submit" class="btn btn-success" onclick="submitForm()") #{mode === 'Update' ? 'Update' : 'Add'}
-    span &nbsp;
+    span &nbsp; //-Adding space between buttons
     button(type="submit" class="btn btn-primary" onclick="window.location.href='/'") Back to list
 
   script.
-    const format = 'DD/MM/YYYY HH:mm'
+    const format = 'DD/MM/YYYY HH:mm' //-Setting up date/time picker
     const picker = new tempusDominus.TempusDominus(document.getElementById('datetimepicker1'),{
         localization: {
             'locale': 'fr'
@@ -35,7 +38,7 @@ body
     picker.dates.formatInput = function(date) {
         return moment(date).format(format)
     }
-
+     //-If in update mode, pre-fill the form with existing data
     if ("#{mode}" === "Update") {
       const eventData = !{JSON.stringify(Data || {})}.schedule;
       document.getElementById('plans').value = eventData.plans || '';
@@ -48,7 +51,7 @@ body
       document.getElementById('contactPhone').value = eventData.contactPhone || '';
       document.getElementById('placeofMeeting').value = eventData.placeofMeeting || '';
     }
-
+    //-Function to submit the form data
     function submitForm() {
       const eventData = {
         plans: document.getElementById('plans').value,
@@ -57,17 +60,17 @@ body
         contactPhone: document.getElementById('contactPhone').value,
         placeofMeeting: document.getElementById('placeofMeeting').value,
       };
-
+      //-Determine the URL and method based on the mode
       const url = "#{mode}" === "Update" ? `/api/schedule/${!{JSON.stringify(eventData || {})}.id}` : '/api/schedule';
       const method = "#{mode}" === "Update" ? 'put' : 'post';
-
+      //-Making an AJAX request to add/update data
       axios[method](url, eventData).then(response => {
         alert('Success!');
         location.href = '/'
       })
       .catch(error => {
         if(error.response)
-          alert(JSON.stringify(error.response.data.errors))
+          alert(JSON.stringify(error.response.data.errors)) //-Alerting validation errors
         else
           alert(error)
       });

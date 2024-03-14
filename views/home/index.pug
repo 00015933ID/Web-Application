@@ -1,32 +1,36 @@
+//-Including head template
 include ../head.pug
+//-Defining body content
 body
     .container.mt-5
       .row.d-flex.align-items-center
         .col-md-6
           h1 List
         .col-md-6.text-end
-          a.btn.btn-success(href='/add', role='button') Add      
+          a.btn.btn-success(href='/add', role='button') Add  
+              //-Table for displaying data
       table.table.table-responsive.table-hover.table-striped.table-dark
         thead
           tr
-            th(scope="col") Number
+            th(scope="col") Id
             th(scope="col") Plans
             th(scope="col") DateTime
             th(scope="col") Meeting
-            th(scope="col") Time of meeting
+            th(scope="col") Contact Phone
             th(scope="col") Place of meeting
             th(scope="col") Actions
         tbody
+        //-Table body will be populated dynamically using JavaScript
 script.
   document.addEventListener('DOMContentLoaded', function() {
     axios.get('/api/schedule').then(function(response) {
       const schedules = response.data;
       const tableBody = document.querySelector('table tbody');
-      schedules.forEach(t => {
-        const row = document.createElement('tr');
-        const schedule = t.schedule
+      schedules.forEach(t => { //-Looping through schedules
+        const row = document.createElement('tr');//-Creating a table row
+        const schedule = t.schedule //-Extracting schedule data
         row.innerHTML = `
-          <td>${t.number}</td>
+          <td>${t.id}</td>
           <td>${schedule.plans}</td>
           <td>${schedule.DateTime}</td>
           <td>${schedule.meeting}</td>
@@ -36,7 +40,7 @@ script.
             <button class="btn btn-primary btn-sm" data-id="${t.id}" onclick="window.location.href='/update/${t.id}'">Update</button>
             <button class="btn btn-danger btn-sm" data-id="${t.id}">Delete</button>
           </td>
-        `;
+        `; //-Creating table cells with schedule data and buttons for update and delete
         tableBody.appendChild(row);
       });
     })
@@ -44,18 +48,20 @@ script.
       console.log(error);
     });
 
-    // Use event delegation for delete buttons
+    //-Event listener for delete buttons
     document.addEventListener('click', function(event) {
       if (event.target && event.target.classList.contains('btn-danger')) {
         const scheduleId = event.target.getAttribute('data-id');
         axios.delete(`/api/schedule/${scheduleId}`).then(function(response) {
           alert('Deleted successfully', response);
-          location.href = '/'
+          location.href = '/'//-Redirecting to home page
         })
         .catch(function(error) {
-          alert('Error deleting schedule: ' + error);
+          alert('Error deleting schedule: ' + error);//-Alerting error message
         });
       }
     });
     
   });
+  
+ 

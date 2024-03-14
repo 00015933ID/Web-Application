@@ -1,35 +1,74 @@
 include ../head.pug
 body
-    .container.mt-5
-      h1 Add/Update Plans
-      form(action="/submit-event-form" method="POST")
-        .mb-3
-          label(for="plans" class="form-label") Plans
-          input(type="text" class="form-control" id="plans" name="plans" required)
-        .mb-3
-          label(for="DateTime" class="form-label") Date/Time
-          .input-group.date(id="datetimepicker1" data-target-input="nearest")
-            input(type="text" class="form-control datetimepicker-input" data-target="#datetimepicker1" name="DateTime" required)
-            .input-group-append(data-target="#datetimepicker1" data-toggle="datetimepicker")
-              .input-group-text
-                i.fas.fa-calendar-alt
-        .mb-3
-          label(for="meeting" class="form-label") Meeting
-          input(type="text" class="form-control" id="meeting" name="meeting" required)
-        .mb-3
-          label(for="timeofMeeting" class="form-label") Time of meeting
-          input(type="text" class="form-control" id="timeofMeeting" name="timeofMeeting" required)
-        .mb-3
-          label(for="placeofMeeting" class="form-label") Place of meeting
-          input(type="text" class="form-control" id="placeofMeeting" name="placeofMeeting" required)
-        button(type="submit" class="btn btn-primary") Add/Edit
+  .container.mt-5
+    h1 #{mode}
+    .mb-3
+      label(for="plans" class="form-label") Plans
+      input(type="text" class="form-control" id="plans" name="plans" required)
+    .mb-3
+      label(for="DateTime" class="form-label") Date/Time
+      .input-group.date(id="datetimepicker1" data-target-input="nearest")
+        input(type="text" class="form-control datetimepicker-input" data-target="#datetimepicker1" id="DateTime" name="DateTime" required)
+        .input-group-append(data-target="#datetimepicker1" data-toggle="datetimepicker")
+          .input-group-text
+            i.fas.fa-calendar-alt
+    .mb-3
+      label(for="meeting" class="form-label") Meeting
+      input(type="text" class="form-control" id="meeting" name="meeting" required)
+    .mb-3
+      label(for="" class="form-label") contactPhone
+      input(type="tel" class="form-control" id="contactPhone" name="contactPhone" required)
+    .mb-3
+      label(for="placeofMeeting" class="form-label") Place of meeting
+      input(type="text" class="form-control" id="placeofMeeting" name="placeofMeeting" required)
+    button(type="submit" class="btn btn-success" onclick="submitForm()") #{mode === 'Update' ? 'Update' : 'Add'}
+    span &nbsp;
+    button(type="submit" class="btn btn-primary" onclick="window.location.href='/'") Back to list
 
-    script.
-        const picker = new tempusDominus.TempusDominus(document.getElementById('datetimepicker1'),{
-            localization: {
-                'locale': 'fr'
-            }
-        });
-        picker.dates.formatInput = function(date) {
-            return moment(date).format('DD/MM/YYYY HH:mm')
+  script.
+    const format = 'DD/MM/YYYY HH:mm'
+    const picker = new tempusDominus.TempusDominus(document.getElementById('datetimepicker1'),{
+        localization: {
+            'locale': 'fr'
         }
+    })
+    picker.dates.formatInput = function(date) {
+        return moment(date).format(format)
+    }
+
+    if ("#{mode}" === "Update") {
+      const eventData = !{JSON.stringify(Data || {})}.schedule;
+      document.getElementById('plans').value = eventData.plans || '';
+
+      picker.dates.setValue(
+        new tempusDominus.DateTime(moment(eventData.eventDateTime, format))
+      );
+
+      document.getElementById('meeting').value = eventData.meeting || '';
+      document.getElementById('contactPhone').value = eventData.contactPhone || '';
+      document.getElementById('placeofMeeting').value = eventData.placeofMeeting || '';
+    }
+
+    function submitForm() {
+      const eventData = {
+        plans: document.getElementById('plans').value,
+        DateTime: document.getElementById('DateTime').value,
+        meeting: document.getElementById('meeting').value,
+        contactPhone: document.getElementById('contactPhone').value,
+        placeofMeeting: document.getElementById('placeofMeeting').value,
+      };
+
+      const url = "#{mode}" === "Update" ? `/api/schedule/${!{JSON.stringify(eventData || {})}.id}` : '/api/schedule';
+      const method = "#{mode}" === "Update" ? 'put' : 'post';
+
+      axios[method](url, eventData).then(response => {
+        alert('Success!');
+        location.href = '/'
+      })
+      .catch(error => {
+        if(error.response)
+          alert(JSON.stringify(error.response.data.errors))
+        else
+          alert(error)
+      });
+    }

@@ -11,6 +11,15 @@ const schedule_controller = {
             schedule_service.create(req, res)
         )
     },
+    update(req, res) {
+        const schedule = schedule_service.update(req.params.id, req.body)
+        
+        if (schedule) {
+            res.json(schedule)
+        } else {
+            res.status(404).send('Schedule not found')
+        }
+    },
     delete(req, res) {
         const schedule = schedule_service.getById(req.params.id)
         
@@ -24,3 +33,4 @@ const schedule_controller = {
 }
 
 module.exports = schedule_controller
+

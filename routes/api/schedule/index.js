@@ -1,6 +1,6 @@
 const express = require('express');
 const { validationResult } = require('express-validator');
-const { addScheduleValidation, deleteScheduleValidation } = require('../../../validators/schedule');
+const { addScheduleValidation, updateScheduleValidation, deleteScheduleValidation } = require('../../../validators/schedule');
 
 const router = express.Router();
 const schedule_controller = require('../../../controllers/api/schedule');
@@ -18,6 +18,15 @@ router.post('/', addScheduleValidation(), (req, res)=>{
     }
 
     schedule_controller.create(req, res)
+})
+
+router.put('/:id', updateScheduleValidation(), (req, res)=>{
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  schedule_controller.update(req, res)
 })
 
 router.delete('/:id', deleteScheduleValidation(), (req, res, next)=>{

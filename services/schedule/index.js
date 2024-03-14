@@ -27,6 +27,19 @@ const schedule_service = {
         
         return new_schedule
     },
+    update(id, updateData){
+        const scheduleIndex = schedules.findIndex(t => t.id == id)
+
+        if (scheduleIndex === -1) {
+            return null
+        }
+
+        schedules[scheduleIndex].schedule = { ...schedules[scheduleIndex].schedule, ...updateData }
+
+        writeToFile(schedules)
+
+        return schedules[scheduleIndex]
+    },
     delete(id) {
         const index = schedules.findIndex(u => u.id == id)
         schedules.splice(index, 1)    

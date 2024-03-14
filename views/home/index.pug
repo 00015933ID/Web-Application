@@ -5,20 +5,21 @@ body
     .container.mt-5
       .row.d-flex.align-items-center
         .col-md-6
-          h1 List
+          h1(style="color: #232328") To Do Plan 
+          p This web application was created to fulfill Web Technology module’s requirements and does not represent an actual company or service
         .col-md-6.text-end
-          a.btn.btn-success(href='/add', role='button') Add  
+          a.btn.btn-success(href='/add', role='button', style="background-color: #232328") Add  
               //-Table for displaying data
       table.table.table-responsive.table-hover.table-striped.table-dark
         thead
-          tr
-            th(scope="col") Id
-            th(scope="col") Plans
-            th(scope="col") DateTime
-            th(scope="col") Meeting
-            th(scope="col") Contact Phone
-            th(scope="col") Place of meeting
-            th(scope="col") Actions
+          tr(style="color: #1F1A1B;")
+            th(scope="col", style="background-color: #D73444;") Id 
+            th(scope="col", style="background-color: #D73444;") Plans
+            th(scope="col", style="background-color: #D73444;") DateTime
+            th(scope="col", style="background-color: #D73444;") Meeting
+            th(scope="col", style="background-color: #D73444;") Contact Phone
+            th(scope="col", style="background-color: #D73444;") Place of meeting
+            th(scope="col", style="background-color: #D73444;") Actions
         tbody
         //-Table body will be populated dynamically using JavaScript
 script.
@@ -63,5 +64,6 @@ script.
     });
     
   });
+  
   
  

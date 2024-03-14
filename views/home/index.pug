@@ -1,35 +1,43 @@
 include ../head.pug
 body
-    .container.mt-7
-      h1(style="color: #EF0660") To Do Plan
-      table.table.table-responsive.table-hover.table-striped.table-success
+    .container.mt-5
+      h1 To Do Plans
+      table.table.table-responsive.table-hover.table-striped.table-dark
         thead
           tr
-            th(scope="col" style="color: #0A4E43; background-color: #0E8EE3") Number
-            th(scope="col" style="color: #0A4E43; background-color: #0E8EE3") Plans
-            th(scope="col" style="color: #0A4E43; background-color: #0E8EE3") DateTime
-            th(scope="col" style="color: #0A4E43; background-color: #0E8EE3") Meeting
-            th(scope="col" style="color: #0A4E43; background-color: #0E8EE3") Time of meeting
-            th(scope="col" style="color: #0A4E43; background-color: #0E8EE3") Place of meeting
-            th(scope="col" style="color: #0A4E43; background-color: #0E8EE3") Actions
+            th(scope="col") Number
+            th(scope="col") Plans
+            th(scope="col") DateTime
+            th(scope="col") Meeting
+            th(scope="col") Time of meeting
+            th(scope="col") Place of meeting
+            th(scope="col") Actions
         tbody
-          tr
-            td 1
-            td Finish Project
-            td 2024-03-03 12:00
-            td Company's partners
-            td 15:00
-            td Hilton
-            td
-              button.btn.btn-primary.btn-sm.mt-2(style="background-color: #EF0660; color: #white") Edit
-              button.btn.btn-danger.btn-sm.mt-2(style="background-color: #0F25CB; color: #white") Delete
-          tr
-            td 2
-            td Go to hospital
-            td 2024-04-15  9:00
-            td does not have any meeting
-            td N/A
-            td does not have any meeting
-            td
-              button.btn.btn-primary.btn-sm.mt-2(style="background-color: #EF0660; color: white") Edit
-              button.btn.btn-danger.btn-sm.mt-2(style="background-color: #0F25CB; color: white") Delete
+script.
+      document.addEventListener('DOMContentLoaded', function() {
+        axios.get('/api/schedule')
+          .then(function(response) {
+            const schedules = response.data;
+            const tableBody = document.querySelector('table tbody');
+            schedules.forEach(t => {
+              const row = document.createElement('tr');
+              const schedule = t.schedule
+              row.innerHTML = `
+                <td>${t.id}</td>
+                <td>${schedule.plans}</td>
+                <td>${schedule.DateTime}</td>
+                <td>${schedule.meeting}</td>
+                <td>${schedule.timeofMeeting}</td>
+                <td>${schedule.placeofMeeting}</td>
+                <td>
+                  <button class="btn btn-primary btn-sm">Edit</button>
+                  <button class="btn btn-danger btn-sm">Delete</button>
+                </td>
+              `;
+              tableBody.appendChild(row);
+            });
+          })
+          .catch(function(error) {
+            console.log(error);
+          });
+      });

@@ -1,31 +1,36 @@
-// Import the Express.js framework
+// express web app instance
 const express = require('express')
 
-// Middleware for parsing request bodies to JSON
+// parse request body to json
 const body_parser = require('body-parser')
 
-// Module for file input/output operations
+// for File IO
 const path = require('path')
 
-// Import the plan routes module
-const plan_route = require('./routes/plan')
+// make mock database (raw .json file) available globally in app
+global.plan_db = path.join(__dirname, './data/plan_db.json');
 
-// Define the path to the plan database file and store it in a global variable
-global.planDb = path.join(__dirname, './data/planDb.json')
-// Create an instance of the Express.js application
+const plan_route = require('./routes/plan')
+const api_route = require('./routes/api');
+
 const app = express();
 
-// Set the view engine for rendering views
-// In this case, it's set to 'pug', meaning the application will render Pug templates
+// Set the view engine for web routes
 app.set('view engine', 'pug');
-// Serve static files from the 'public' directory for '/css' and '/js' routes
-// This allows serving CSS and JavaScript files to the client
+
 app.use('/css', express.static('public/css'))
 app.use('/js', express.static('public/js'))
-// Use the plan routes defined in the 'plan_route' module
-app.use('/', plan_route); 
-// Specify the port number for the server to listen on
-const port = 3000;
-// Start the server and listen for incoming connections
-app.listen(port, () => console.log(`Server running on port ${port}`));
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+app.use('/api', api_route); // API routes
+app.use('/', plan_route); // plan routes
+
+// redirect to home page if unknown requests requested
+app.use((req, res) => {
+    res.redirect('/');
+});
+
+const port = 3000;
+app.listen(port, () => console.log(`Server running on port ${port}`));
